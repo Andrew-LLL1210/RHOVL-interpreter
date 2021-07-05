@@ -74,10 +74,9 @@ def caller(pointer, progm):
     progm.setval(x)
     progm.run(fns)
 def updater(op, i, progm):
-    x = progm.getval()
-    op(progm)
-    progm.set(i, progm.getval())
-    progm.setval(x)
+    # x = progm.getval()
+    progm.set(i, op(progm.get(i), progm.getval()))
+    # progm.setval(x)
 def ignorer(fns, progm):
     x = progm.getval()
     progm.run(fns)
@@ -93,8 +92,7 @@ def compiletoken(token, tokens):
     if token == '=':
         return partial(setter, alpha(next(tokens)))
     if '=' in token:
-        nexttoken = next(tokens)
-        return partial(updater, compiletoken(token[0], iter([nexttoken])), alpha(nexttoken))
+        return partial(updater, ops[token[0]], alpha(next(tokens)))
     if token in ['#', '#\'']:
         return inputter
     if token[0] == '$':
