@@ -1,0 +1,14 @@
+if and function tests
+
+{
+(x > y: x$'[" is greater than ":$]y$')
+(x < y: x$'[" is less than ":$]y$')
+(x== y: x$'[" is equal to ":$]y$')
+10$ (a newline)
+}
+= f
+
+3 = x
+5 = y @f
+2 = y @f
+3 = y @f

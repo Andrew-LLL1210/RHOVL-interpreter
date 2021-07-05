@@ -1,0 +1,25 @@
+list and loops tests
+
+while loop and fancy list printing
+10 (; $,-1)
+
+for loop and string printing
+["Blast Off!":$] 10$ prints newline
+
+use for-put to move & modify data
+["the first four squares are: ":$]
+[1 2 3 4::abcd] initialize list
+[abcd:^2:efgh] map list and store somewhere else
+[efgh:$_] 10$
+
+build a list with for-modify
+3 = x
+[abcdefg; x+2=x]
+["built list: ":$][abcdefg:$_] 10$
+[abc;-3] alter the first three items
+["built list: ":$][abcdefg:$_] 10$
+
+sum a list with for
+0 = x
+[abcdefg: +x=x]
+["sum of the list is ":$] x$' 10$
