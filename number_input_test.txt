@@ -1,0 +1,5 @@
+
+["numberic input test\nplease input a number: ":$]
+#' = a
+
+["your number is ":$] a$' "."$

@@ -13,10 +13,11 @@ def alpha(char):
 
 number = re.compile(r'\d+')
 letter = re.compile(r'\w')
-operation = re.compile(r'<=|>=|==|/=|[+\-*/%^&|~<>]$')
-token = re.compile(r'\d+|[a-z]|[+\-*/%^&|~<>=!]=|#\'?|\$[\'`_,]?|[+\-*/%^&|~<>=()\[\]{}:;@]|"[^"]+"')
+operation = re.compile(r'<=|>=|==|!=|[+\-*/%^&|~<>]$')
+token = re.compile(r'\d+|[a-z]|[+\-*/%^&|~<>=!]=|#[\'_]?|\$[\'`_,]?|[+\-*/%^&|~<>=()\[\]{}:;@]|"[^"]+"')
 alphabet = 'abcdefghijklmnopqrstuvwxyz'
 endings = {'_':' ', '`':'\n', ',':', ', "'":''}
+numinput = re.compile(r'\d+')
 
 ops = {
     '+': lambda x, y: x + y,
@@ -46,8 +47,8 @@ def getter(i, progm):
     return progm.getval()
 def applier(fn, y, progm): progm.setval(fn(progm.getval(), y(progm)))
 def setter(i, progm): progm.set(i, progm.getval())
-def inputter(progm):
-    progm.input()
+def inputter(numeric, strip, progm):
+    progm.input(numeric, strip)
 def outputter(do_ascii, end, progm):
     x = progm.getval()
     if do_ascii: x = chr(x)
@@ -93,8 +94,13 @@ def compiletoken(token, tokens):
         return partial(setter, alpha(next(tokens)))
     if '=' in token:
         return partial(updater, ops[token[0]], alpha(next(tokens)))
-    if token in ['#', '#\'']:
-        return inputter
+    if token[0] == '#':
+        if token == '#':
+            return partial(inputter, False, False)
+        if token == "#'":
+            return partial(inputter, True, True)
+        if token == '#_':
+            return partial(inputter, False, True)
     if token[0] == '$':
         return partial(outputter, len(token) == 1, endings[(token + "'")[1]])
     if token == '(':
@@ -165,12 +171,24 @@ class Program:
     def run(self, fns):
         for fn in fns: fn(self)
         return self.getval()
-    def input(self):
-        if not self.buffer:
+    def input(self, asnumber=False, strip=False):
+        while not self.buffer:
             try:
                 self.buffer += next(self.inputter)
             except (StopIteration, KeyboardInterrupt):
                 return self.setval(0)
+            if strip:
+                self.buffer = self.buffer.lstrip()
+        
+        if asnumber:
+            if (m := number.match(self.buffer)):
+                x = int(m.group())
+                self.buffer = self.buffer[m.end():]
+                return self.setval(x)
+            raise BaseException("#' failed to get numeric input at character '%'" %
+                self.buffer[0]
+            )
+
         x = ord(self.buffer[0])
         self.buffer = self.buffer[1:]
         return self.setval(x)
