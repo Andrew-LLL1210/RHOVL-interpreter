@@ -1,0 +1,6 @@
+
+["Hello!\nWhat's your name?\n":$]
+#=c request a line of input
+["Hello, ":$]
+c (!=10; c$ #=c) print out each character and get the next until newline
+"!"$
